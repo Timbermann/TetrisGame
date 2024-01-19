@@ -61,6 +61,31 @@ void moveTetromino(int deltaX, int deltaY) {
     }
 }
 
+void rotateTetromino() {
+    int temp[TETROMINO_SIZE][TETROMINO_SIZE];
+
+    // Transpose the matrix
+    for (int i = 0; i < TETROMINO_SIZE; i++) {
+        for (int j = 0; j < TETROMINO_SIZE; j++) {
+            temp[j][i] = currentTetromino.shape[i][j];
+        }
+    }
+
+    // Reverse the order of the columns
+    for (int i = 0; i < TETROMINO_SIZE; i++) {
+        for (int j = 0; j < TETROMINO_SIZE / 2; j++) {
+            int tmp = temp[i][j];
+            temp[i][j] = temp[i][TETROMINO_SIZE - j - 1];
+            temp[i][TETROMINO_SIZE - j - 1] = tmp;
+        }
+    }
+
+    // Check if rotation is possible
+    // if (canRotate(temp)) {
+        memcpy(currentTetromino.shape, temp, sizeof(temp));
+    // }
+}
+
 // Function to initialize the board
 void initBoard() {
     for (int y = 0; y < BOARD_HEIGHT; y++) {
