@@ -98,13 +98,32 @@ void initBoard() {
 // Function to print the board
 void printBoard() {
     system("cls"); // Clear the console
-    for (int y = 0; y < BOARD_HEIGHT; y++) {
-        for (int x = 0; x < BOARD_WIDTH; x++) {
-            printf("%c ", board[y][x] ? '#' : '.');
-        }
-        printf("\n");
+
+    // Draw top border
+    for (int x = 0; x < BOARD_WIDTH + 2; x++) {
+        printf("# ");
     }
+    printf("\n");
+
+    for (int y = 0; y < BOARD_HEIGHT; y++) {
+        printf("# "); // Left border
+        for (int x = 0; x < BOARD_WIDTH; x++) {
+            if (board[y][x] == 1) {
+                printf("A "); // Draw Tetromino
+            } else {
+                printf("  "); // Empty space
+            }
+        }
+        printf("#\n"); // Right border
+    }
+
+    // Draw bottom border
+    for (int x = 0; x < BOARD_WIDTH + 2; x++) {
+        printf("# ");
+    }
+    printf("\n");
 }
+
 
 int main() {
     initBoard();
