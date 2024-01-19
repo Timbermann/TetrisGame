@@ -7,6 +7,7 @@
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
 #define TETROMINO_SIZE 4
+#define FALL_SPEED 10
 
 // Representing the game board
 int board[BOARD_HEIGHT][BOARD_WIDTH] = {0};
@@ -142,6 +143,7 @@ void printBoard() {
 int main() {
     initBoard();
     createTetromino(T); // Create an initial Tetromino, e.g., T-shaped
+    int counter = 0;
 
     while (true) {
         if (_kbhit()) {
@@ -167,12 +169,17 @@ int main() {
             }
         }
 
-        // Game logic here
-        // ...
+        // Move the Tetromino down at regular intervals
+        if (counter >= FALL_SPEED) {
+            moveTetromino(0, 1); // Move down
+            counter = 0; // Reset the counter
+        } else {
+            counter++; // Increment the counter
+        }
 
         printBoard(); // Print the updated board
 
-        _sleep(1000); // Sleep for a delay (adjust as needed)
+        _sleep(100); // Sleep for a delay (adjust as needed)
     }
 
     return 0;
