@@ -47,6 +47,20 @@ void createTetromino(TetrominoType type) {
     memcpy(currentTetromino.shape, tetrominos[type], sizeof(currentTetromino.shape));
 }
 
+bool canMove(int newX, int newY) {
+    // Collision detection logic here
+    // Return true if the Tetromino can move to the new position
+}
+
+void moveTetromino(int deltaX, int deltaY) {
+    int newX = currentTetromino.x + deltaX;
+    int newY = currentTetromino.y + deltaY;
+    if (canMove(newX, newY)) {
+        currentTetromino.x = newX;
+        currentTetromino.y = newY;
+    }
+}
+
 // Function to initialize the board
 void initBoard() {
     for (int y = 0; y < BOARD_HEIGHT; y++) {
