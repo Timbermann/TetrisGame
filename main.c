@@ -6,9 +6,33 @@
 
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
+#define TETROMINO_SIZE 4
 
 // Representing the game board
 int board[BOARD_HEIGHT][BOARD_WIDTH] = {0};
+
+typedef enum {
+    I, O, T, S, Z, J, L, NUM_TETROMINOS
+} TetrominoType;
+
+int tetrominos[NUM_TETROMINOS][TETROMINO_SIZE][TETROMINO_SIZE] = {
+    // I
+    {
+        {0, 0, 0, 0},
+        {1, 1, 1, 1},
+        {0, 0, 0, 0},
+        {0, 0, 0, 0}
+    },
+    // O
+    {
+        {0, 0, 0, 0},
+        {0, 1, 1, 0},
+        {0, 1, 1, 0},
+        {0, 0, 0, 0}
+    },
+    // Add other Tetromino shapes here
+    // ...
+};
 
 // Function to initialize the board
 void initBoard() {
