@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1705704465 source:c:\users\nikod\desktop\tetrisgame\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	<time.h>
+	<conio.h>
+

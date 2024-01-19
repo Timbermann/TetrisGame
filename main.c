@@ -31,9 +31,43 @@ int tetrominos[NUM_TETROMINOS][TETROMINO_SIZE][TETROMINO_SIZE] = {
         {0, 1, 1, 0},
         {0, 0, 0, 0}
     },
-    // Add other Tetromino shapes here
-    // ...
+    // T
+    {
+        {0, 0, 0, 0},
+        {1, 1, 1, 0},
+        {0, 1, 0, 0},
+        {0, 0, 0, 0}
+    },
+    // S
+    {
+        {0, 0, 0, 0},
+        {0, 1, 1, 0},
+        {1, 1, 0, 0},
+        {0, 0, 0, 0}
+    },
+    // Z
+    {
+        {0, 0, 0, 0},
+        {1, 1, 0, 0},
+        {0, 1, 1, 0},
+        {0, 0, 0, 0}
+    },
+    // J
+    {
+        {0, 0, 0, 0},
+        {1, 0, 0, 0},
+        {1, 1, 1, 0},
+        {0, 0, 0, 0}
+    },
+    // L
+    {
+        {0, 0, 0, 0},
+        {0, 0, 1, 0},
+        {1, 1, 1, 0},
+        {0, 0, 0, 0}
+    }
 };
+
 
 typedef struct {
     int x, y; // Position on the board
@@ -142,7 +176,8 @@ void printBoard() {
 
 int main() {
     initBoard();
-    createTetromino(T); // Create an initial Tetromino, e.g., T-shaped
+    //createTetromino(T); // Create an initial Tetromino, e.g., T-shaped
+    createTetromino(rand() % NUM_TETROMINOS); // Create a random Tetromino
     int counter = 0;
 
     while (true) {
