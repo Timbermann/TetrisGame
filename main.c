@@ -34,6 +34,19 @@ int tetrominos[NUM_TETROMINOS][TETROMINO_SIZE][TETROMINO_SIZE] = {
     // ...
 };
 
+typedef struct {
+    int x, y; // Position on the board
+    int shape[TETROMINO_SIZE][TETROMINO_SIZE];
+} Tetromino;
+
+Tetromino currentTetromino;
+
+void createTetromino(TetrominoType type) {
+    currentTetromino.x = BOARD_WIDTH / 2 - TETROMINO_SIZE / 2;
+    currentTetromino.y = 0;
+    memcpy(currentTetromino.shape, tetrominos[type], sizeof(currentTetromino.shape));
+}
+
 // Function to initialize the board
 void initBoard() {
     for (int y = 0; y < BOARD_HEIGHT; y++) {
