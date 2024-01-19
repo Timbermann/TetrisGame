@@ -108,21 +108,38 @@ void printBoard() {
 
 int main() {
     initBoard();
+    createTetromino(T); // Create an initial Tetromino, e.g., T-shaped
 
     while (true) {
-        // Game logic here
-
-        // Example: print the board
-        printBoard();
-
-        // Handle user input
         if (_kbhit()) {
             char key = _getch();
-            // Move Tetrominoes based on user input
+            switch (key) {
+                case 'a': // Move left
+                case 'A':
+                    moveTetromino(-1, 0);
+                    break;
+                case 'd': // Move right
+                case 'D':
+                    moveTetromino(1, 0);
+                    break;
+                case 's': // Move down
+                case 'S':
+                    moveTetromino(0, 1);
+                    break;
+                case 'w': // Rotate
+                case 'W':
+                    rotateTetromino();
+                    break;
+                // Add other controls as needed
+            }
         }
 
-        // Add a delay
-        _sleep(1000); // Sleep for 1000 milliseconds
+        // Game logic here
+        // ...
+
+        printBoard(); // Print the updated board
+
+        _sleep(1000); // Sleep for a delay (adjust as needed)
     }
 
     return 0;
