@@ -108,10 +108,23 @@ void printBoard() {
     for (int y = 0; y < BOARD_HEIGHT; y++) {
         printf("# "); // Left border
         for (int x = 0; x < BOARD_WIDTH; x++) {
-            if (board[y][x] == 1) {
-                printf("A "); // Draw Tetromino
-            } else {
-                printf("  "); // Empty space
+            // Check if the current position is part of the Tetromino
+            bool isPartOfTetromino = false;
+            for (int i = 0; i < TETROMINO_SIZE; i++) {
+                for (int j = 0; j < TETROMINO_SIZE; j++) {
+                    if (currentTetromino.shape[i][j] == 1) {
+                        if (y == currentTetromino.y + i && x == currentTetromino.x + j) {
+                            printf("A ");
+                            isPartOfTetromino = true;
+                            break;
+                        }
+                    }
+                }
+                if (isPartOfTetromino) break;
+            }
+
+            if (!isPartOfTetromino) {
+                printf("%c ", board[y][x] ? '#' : ' ');
             }
         }
         printf("#\n"); // Right border
@@ -123,6 +136,7 @@ void printBoard() {
     }
     printf("\n");
 }
+
 
 
 int main() {
