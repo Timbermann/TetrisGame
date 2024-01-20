@@ -8,6 +8,7 @@
 #define BOARD_HEIGHT 20
 #define TETROMINO_SIZE 4
 #define FALL_SPEED 10
+#define MAX_TETROMINOES 60
 
 // Representing the game board
 int board[BOARD_HEIGHT][BOARD_WIDTH] = {0};
@@ -75,6 +76,21 @@ typedef struct {
 } Tetromino;
 
 Tetromino currentTetromino;
+
+void fixTetromino() {
+    // Update the board to reflect the Tetromino's final position
+    for (int i = 0; i < TETROMINO_SIZE; i++) {
+        for (int j = 0; j < TETROMINO_SIZE; j++) {
+            if (currentTetromino.shape[i][j] == 1) {
+                int boardX = currentTetromino.x + j;
+                int boardY = currentTetromino.y + i;
+                if (boardX >= 0 && boardX < BOARD_WIDTH && boardY < BOARD_HEIGHT) {
+                    board[boardY][boardX] = 1;
+                }
+            }
+        }
+    }
+}
 
 void createTetromino(TetrominoType type) {
     currentTetromino.x = BOARD_WIDTH / 2 - TETROMINO_SIZE / 2;
@@ -176,11 +192,13 @@ void printBoard() {
 
 int main() {
     initBoard();
+    int tetrominoCount = 0;
     //createTetromino(T); // Create an initial Tetromino, e.g., T-shaped
     createTetromino(rand() % NUM_TETROMINOS); // Create a random Tetromino
+    tetrominoCount++;
     int counter = 0;
 
-    while (true) {
+    while (tetrominoCount <= MAX_TETROMINOES) {
         if (_kbhit()) {
             char key = _getch();
             switch (key) {
@@ -205,16 +223,30 @@ int main() {
         }
 
         // Move the Tetromino down at regular intervals
-        if (counter >= FALL_SPEED) {
+        //if (counter >= FALL_SPEED) {
+        //    moveTetromino(0, 1); // Move down
+        //    counter = 0; // Reset the counter
+        //} else {
+        //    counter++; // Increment the counter
+        //}
+        if (canMove(currentTetromino.x, currentTetromino.y + 1)) {
             moveTetromino(0, 1); // Move down
-            counter = 0; // Reset the counter
         } else {
-            counter++; // Increment the counter
+            fixTetromino(); // Fix the Tetromino in place
+            if (tetrominoCount < MAX_TETROMINOES) {
+                createTetromino(rand() % NUM_TETROMINOS); // Create a new Tetromino
+                tetrominoCount++;
+            } else {
+                break; // Max Tetromino count reached
+            }
         }
 
         printBoard(); // Print the updated board
 
         _sleep(100); // Sleep for a delay (adjust as needed)
+
+        // Game over or max Tetromino count reached
+        printf("Game Over\n");
     }
 
     return 0;
