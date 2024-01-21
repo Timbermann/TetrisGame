@@ -129,31 +129,45 @@ void moveTetromino(int deltaX, int deltaY) {
     }
 }
 
-/*void rotateTetromino() {
-    int temp[TETROMINO_SIZE][TETROMINO_SIZE];
-
+void rotateTetromino(int shape[TETROMINO_SIZE][TETROMINO_SIZE], int newShape[TETROMINO_SIZE][TETROMINO_SIZE]) {
     // Transpose the matrix
     for (int i = 0; i < TETROMINO_SIZE; i++) {
         for (int j = 0; j < TETROMINO_SIZE; j++) {
-            temp[j][i] = currentTetromino.shape[i][j];
+            newShape[j][i] = shape[i][j];
         }
     }
 
     // Reverse the order of the columns
     for (int i = 0; i < TETROMINO_SIZE; i++) {
         for (int j = 0; j < TETROMINO_SIZE / 2; j++) {
-            int tmp = temp[i][j];
-            temp[i][j] = temp[i][TETROMINO_SIZE - j - 1];
-            temp[i][TETROMINO_SIZE - j - 1] = tmp;
+            int temp = newShape[i][j];
+            newShape[i][j] = newShape[i][TETROMINO_SIZE - 1 - j];
+            newShape[i][TETROMINO_SIZE - 1 - j] = temp;
         }
     }
+}
 
-    // Check if rotation is possible
-    // if (canRotate(temp)) {
-        memcpy(currentTetromino.shape, temp, sizeof(temp));
-    // }
-} */
+bool canRotate(int newShape[TETROMINO_SIZE][TETROMINO_SIZE], int x, int y) {
+    for (int i = 0; i < TETROMINO_SIZE; i++) {
+        for (int j = 0; j < TETROMINO_SIZE; j++) {
+            if (newShape[i][j] == 1) {
+                int boardX = x + j;
+                int boardY = y + i;
 
+                // Check against the floor and walls
+                if (boardY >= BOARD_HEIGHT || boardX < 0 || boardX >= BOARD_WIDTH) {
+                    return false;
+                }
+
+                // Check against other fixed blocks
+                if (boardY >= 0 && board[boardY][boardX] == 1) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
 
 // Function to initialize the board
 void initBoard() {
@@ -238,7 +252,11 @@ int main() {
                 break;
             case 'w': // Rotate
             case 'W':
-                // Add rotation logic here, including collision check for rotation
+                int newShape[TETROMINO_SIZE][TETROMINO_SIZE];
+                rotateTetromino(currentTetromino.shape, newShape);
+                if (canRotate(newShape, currentTetromino.x, currentTetromino.y)) {
+                memcpy(currentTetromino.shape, newShape, sizeof(newShape));
+                }
                 break;
             // Add other controls as needed
         }
