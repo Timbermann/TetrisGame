@@ -105,13 +105,14 @@ bool canMove(int newX, int newY) {
                 int boardX = newX + j;
                 int boardY = newY + i;
 
-                // Check against the floor and walls
-                if (boardY >= BOARD_HEIGHT || boardX < 0 || boardX >= BOARD_WIDTH) {
-                    return false;
-                }
+                // Check against the floor
+                if (boardY >= BOARD_HEIGHT) return false;
 
-                // Check against other fixed blocks
-                if (boardY >= 0 && board[boardY][boardX] == 1) {
+                // Check against the left and right borders
+                if (boardX < 0 || boardX >= BOARD_WIDTH) return false;
+
+                // Check against other fixed blocks (only if within board bounds)
+                if (boardY < BOARD_HEIGHT && board[boardY][boardX] == 1) {
                     return false;
                 }
             }
@@ -229,7 +230,7 @@ int main() {
     int counter = 0;
 
     while (tetrominoCount <= MAX_TETROMINOES) {
-         if (_kbhit()) {
+        if (_kbhit()) {
         char key = _getch();
         switch (key) {
             case 'a': // Move left
@@ -260,22 +261,26 @@ int main() {
                 break;
             // Add other controls as needed
         }
-    }
-
+        }
+        // Check for game over condition right after creating a new Tetromino
+        if (!canMove(currentTetromino.x, currentTetromino.y)) {
+            printf("Game Over\n");
+            break;
+        }
         // Automatically move the Tetromino down or fix it if it can't move down
         if (counter >= FALL_SPEED) {
-        if (canMove(currentTetromino.x, currentTetromino.y + 1)) {
-            moveTetromino(0, 1); // Move down
+            if (canMove(currentTetromino.x, currentTetromino.y + 1)) {
+                moveTetromino(0, 1); // Move down
+            }
+            else {
+                fixTetromino(); // Fix the Tetromino in place
+                createTetromino(rand() % NUM_TETROMINOS); // Create a new Tetromino
+                tetrominoCount++;
+            }
+            counter = 0; // Reset the counter
         }
         else {
-            fixTetromino(); // Fix the Tetromino in place
-            createTetromino(rand() % NUM_TETROMINOS); // Create a new Tetromino
-            tetrominoCount++;
-        }
-        counter = 0; // Reset the counter
-        }
-        else {
-        counter++; // Increment the counter
+            counter++; // Increment the counter
         }
 
         printBoard(); // Print the updated board
@@ -283,7 +288,7 @@ int main() {
         _sleep(100); // Sleep for a delay (adjust as needed)
 
         // Game over or max Tetromino count reached
-        printf("Game Over\n");
+        //printf("Game Over\n");
     }
 
     return 0;
