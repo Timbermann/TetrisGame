@@ -7,7 +7,7 @@
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
 #define TETROMINO_SIZE 4
-#define FALL_SPEED 10
+#define FALL_SPEED 4
 #define MAX_TETROMINOES 60
 
 // Representing the game board
@@ -223,22 +223,21 @@ int main() {
         }
 
         // Move the Tetromino down at regular intervals
-        //if (counter >= FALL_SPEED) {
-        //    moveTetromino(0, 1); // Move down
-        //    counter = 0; // Reset the counter
-        //} else {
-        //    counter++; // Increment the counter
-        //}
-        if (canMove(currentTetromino.x, currentTetromino.y + 1)) {
-            moveTetromino(0, 1); // Move down
-        } else {
-            fixTetromino(); // Fix the Tetromino in place
-            if (tetrominoCount < MAX_TETROMINOES) {
-                createTetromino(rand() % NUM_TETROMINOS); // Create a new Tetromino
-                tetrominoCount++;
+        if (counter >= FALL_SPEED) {
+            if (canMove(currentTetromino.x, currentTetromino.y + 1)) {
+                moveTetromino(0, 1); // Move down
             } else {
-                break; // Max Tetromino count reached
+                fixTetromino(); // Fix the Tetromino in place
+                if (tetrominoCount < MAX_TETROMINOES) {
+                    createTetromino(rand() % NUM_TETROMINOS); // Create a new Tetromino
+                    tetrominoCount++;
+                } else {
+                    break; // Max Tetromino count reached
+                }
             }
+            counter = 0; // Reset the counter
+        } else {
+            counter++; // Increment the counter
         }
 
         printBoard(); // Print the updated board

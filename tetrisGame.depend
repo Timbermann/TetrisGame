@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1705704465 source:c:\users\nikod\desktop\tetrisgame\main.c
+1705849776 source:c:\users\nikod\desktop\tetrisgame\main.c
 	<stdio.h>
 	<stdlib.h>
 	<stdbool.h>
