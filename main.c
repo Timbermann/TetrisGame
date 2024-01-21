@@ -170,6 +170,35 @@ bool canRotate(int newShape[TETROMINO_SIZE][TETROMINO_SIZE], int x, int y) {
     return true;
 }
 
+void clearFullLines() {
+    for (int y = 0; y < BOARD_HEIGHT; y++) {
+        bool lineIsFull = true;
+        for (int x = 0; x < BOARD_WIDTH; x++) {
+            if (board[y][x] == 0) {
+                lineIsFull = false;
+                break;
+            }
+        }
+
+        if (lineIsFull) {
+            // Shift everything above this line down by one
+            for (int yy = y; yy > 0; yy--) {
+                for (int x = 0; x < BOARD_WIDTH; x++) {
+                    board[yy][x] = board[yy - 1][x];
+                }
+            }
+
+            // Clear the top line
+            for (int x = 0; x < BOARD_WIDTH; x++) {
+                board[0][x] = 0;
+            }
+
+            // Since we just shifted a line down, we need to check this line again
+            y--;
+        }
+    }
+}
+
 // Function to initialize the board
 void initBoard() {
     for (int y = 0; y < BOARD_HEIGHT; y++) {
@@ -273,7 +302,8 @@ int main() {
                 moveTetromino(0, 1); // Move down
             }
             else {
-                fixTetromino(); // Fix the Tetromino in place
+                fixTetromino();
+                clearFullLines();
                 createTetromino(rand() % NUM_TETROMINOS); // Create a new Tetromino
                 tetrominoCount++;
             }
