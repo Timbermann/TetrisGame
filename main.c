@@ -3,12 +3,14 @@
 #include <stdbool.h>
 #include <time.h>
 #include <conio.h> // For _kbhit() and _getch()
+#include <string.h>
 
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
 #define TETROMINO_SIZE 4
 #define FALL_SPEED 4
 #define MAX_TETROMINOES 60
+//#define TETRIS_NUM_TETROMINOS 7
 
 // Representing the game board
 int board[BOARD_HEIGHT][BOARD_WIDTH] = {0};
@@ -16,6 +18,9 @@ int board[BOARD_HEIGHT][BOARD_WIDTH] = {0};
 typedef enum {
     I, O, T, S, Z, J, L, NUM_TETROMINOS
 } TetrominoType;
+
+TetrominoType bag[NUM_TETROMINOS];
+int nextIndex = 0;
 
 int tetrominos[NUM_TETROMINOS][TETROMINO_SIZE][TETROMINO_SIZE] = {
     // I
@@ -76,6 +81,30 @@ typedef struct {
 } Tetromino;
 
 Tetromino currentTetromino;
+
+void fillAndShuffleBag() {
+    // Fill the bag with one of each type
+    for (int i = 0; i < NUM_TETROMINOS; i++) {
+        bag[i] = (TetrominoType)i;
+    }
+
+    // Shuffle the bag
+    for (int i = 0; i < NUM_TETROMINOS; i++) {
+        int j = rand() % NUM_TETROMINOS;
+        TetrominoType temp = bag[i];
+        bag[i] = bag[j];
+        bag[j] = temp;
+    }
+
+    nextIndex = 0;
+}
+
+TetrominoType getNextTetromino() {
+    if (nextIndex >= NUM_TETROMINOS) {
+        fillAndShuffleBag();
+    }
+    return bag[nextIndex++];
+}
 
 void fixTetromino() {
     // Update the board to reflect the Tetromino's final position
@@ -252,6 +281,8 @@ void printBoard() {
 }
 
 int main() {
+    srand(time(NULL)); // Seed the random number generator
+    fillAndShuffleBag(); // Initially fill and shuffle the bag
     initBoard();
     int tetrominoCount = 0;
     //createTetromino(T); // Create an initial Tetromino, e.g., T-shaped
@@ -305,7 +336,8 @@ int main() {
             else {
                 fixTetromino();
                 clearFullLines();
-                createTetromino(rand() % NUM_TETROMINOS); // Create a new Tetromino
+                //createTetromino(rand() % NUM_TETROMINOS); // Create a new Tetromino
+                createTetromino(getNextTetromino());
                 tetrominoCount++;
             }
             counter = 0; // Reset the counter
