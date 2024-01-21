@@ -99,7 +99,6 @@ void createTetromino(TetrominoType type) {
 }
 
 bool canMove(int newX, int newY) {
-    bool canMove(int newX, int newY) {
     for (int i = 0; i < TETROMINO_SIZE; i++) {
         for (int j = 0; j < TETROMINO_SIZE; j++) {
             if (currentTetromino.shape[i][j] == 1) {
@@ -120,7 +119,6 @@ bool canMove(int newX, int newY) {
     }
     return true;
 }
-}
 
 void moveTetromino(int deltaX, int deltaY) {
     int newX = currentTetromino.x + deltaX;
@@ -131,7 +129,7 @@ void moveTetromino(int deltaX, int deltaY) {
     }
 }
 
-void rotateTetromino() {
+/*void rotateTetromino() {
     int temp[TETROMINO_SIZE][TETROMINO_SIZE];
 
     // Transpose the matrix
@@ -154,7 +152,8 @@ void rotateTetromino() {
     // if (canRotate(temp)) {
         memcpy(currentTetromino.shape, temp, sizeof(temp));
     // }
-}
+} */
+
 
 // Function to initialize the board
 void initBoard() {
@@ -216,28 +215,34 @@ int main() {
     int counter = 0;
 
     while (tetrominoCount <= MAX_TETROMINOES) {
-        if (_kbhit()) {
-            char key = _getch();
-            switch (key) {
-                case 'a': // Move left
-                case 'A':
+         if (_kbhit()) {
+        char key = _getch();
+        switch (key) {
+            case 'a': // Move left
+            case 'A':
+                if (canMove(currentTetromino.x - 1, currentTetromino.y)) {
                     moveTetromino(-1, 0);
-                    break;
-                case 'd': // Move right
-                case 'D':
+                }
+                break;
+            case 'd': // Move right
+            case 'D':
+                if (canMove(currentTetromino.x + 1, currentTetromino.y)) {
                     moveTetromino(1, 0);
-                    break;
-                case 's': // Move down
-                case 'S':
+                }
+                break;
+            case 's': // Move down
+            case 'S':
+                if (canMove(currentTetromino.x, currentTetromino.y + 1)) {
                     moveTetromino(0, 1);
-                    break;
-                case 'w': // Rotate
-                case 'W':
-                    rotateTetromino();
-                    break;
-                // Add other controls as needed
-            }
+                }
+                break;
+            case 'w': // Rotate
+            case 'W':
+                // Add rotation logic here, including collision check for rotation
+                break;
+            // Add other controls as needed
         }
+    }
 
         // Automatically move the Tetromino down or fix it if it can't move down
         if (counter >= FALL_SPEED) {
