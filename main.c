@@ -12,6 +12,22 @@
 #define MAX_TETROMINOES 60
 //#define TETRIS_NUM_TETROMINOS 7
 
+int displayMenu() {
+    int choice;
+    do {
+        system("cls");  // Clear the screen
+        printf("TETRIS\n");
+        printf("1. Start New Game\n");
+        printf("2. Options\n");
+        printf("3. Leaderboard\n");
+        printf("4. End\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+    } while (choice < 1 || choice > 4);  // Validate input
+
+    return choice;
+}
+
 // Representing the game board
 int board[BOARD_HEIGHT][BOARD_WIDTH] = {0};
 
@@ -289,6 +305,7 @@ void printBoard() {
 
 int main() {
     srand(time(NULL)); // Seed the random number generator
+   /*
     fillAndShuffleBag(); // Initially fill and shuffle the bag
     initBoard();
     int tetrominoCount = 0;
@@ -296,75 +313,110 @@ int main() {
     createTetromino(rand() % NUM_TETROMINOS); // Create a random Tetromino
     tetrominoCount++;
     int counter = 0;
+    */
 
-    while (tetrominoCount <= MAX_TETROMINOES) {
-        if (_kbhit()) {
-        char key = _getch();
-        switch (key) {
-            case 'a': // Move left
-            case 'A':
-                if (canMove(currentTetromino.x - 1, currentTetromino.y)) {
-                    moveTetromino(-1, 0);
-                }
-                break;
-            case 'd': // Move right
-            case 'D':
-                if (canMove(currentTetromino.x + 1, currentTetromino.y)) {
-                    moveTetromino(1, 0);
-                }
-                break;
-            case 's': // Move down
-            case 'S':
-                if (canMove(currentTetromino.x, currentTetromino.y + 1)) {
-                    moveTetromino(0, 1);
-                }
-                break;
-            case 'w': // Rotate
-            case 'W':
-                int newShape[TETROMINO_SIZE][TETROMINO_SIZE];
-                rotateTetromino(currentTetromino.shape, newShape);
-                if (canRotate(newShape, currentTetromino.x, currentTetromino.y)) {
-                memcpy(currentTetromino.shape, newShape, sizeof(newShape));
-                }
-                break;
-             case ' ': // Drop Tetromino
-                dropTetromino();
-                clearFullLines(); // Check and clear any full lines
-                createTetromino(getNextTetromino()); // Create a new Tetromino
+    while (true) {  // Main loop
+        int menuChoice = displayMenu();
+        int tetrominoCount = 0;
+        int counter = 0;
+        char key;
+
+        switch (menuChoice) {
+            case 1:
+                printf("Starting New Game...\n");
+                _sleep(2000);
+                fillAndShuffleBag(); // Initially fill and shuffle the bag
+                initBoard();
+                tetrominoCount = 0;
+                //createTetromino(T); // Create an initial Tetromino, e.g., T-shaped
+                createTetromino(rand() % NUM_TETROMINOS); // Create a random Tetromino
                 tetrominoCount++;
+                counter = 0;
+
+                while (tetrominoCount <= MAX_TETROMINOES) {
+                    if (_kbhit()) {
+                    key = _getch();
+                    switch (key) {
+                        case 'a': // Move left
+                        case 'A':
+                            if (canMove(currentTetromino.x - 1, currentTetromino.y)) {
+                                moveTetromino(-1, 0);
+                            }
+                            break;
+                        case 'd': // Move right
+                        case 'D':
+                            if (canMove(currentTetromino.x + 1, currentTetromino.y)) {
+                                moveTetromino(1, 0);
+                            }
+                            break;
+                        case 's': // Move down
+                        case 'S':
+                            if (canMove(currentTetromino.x, currentTetromino.y + 1)) {
+                                moveTetromino(0, 1);
+                            }
+                            break;
+                        case 'w': // Rotate
+                        case 'W':
+                            int newShape[TETROMINO_SIZE][TETROMINO_SIZE];
+                            rotateTetromino(currentTetromino.shape, newShape);
+                            if (canRotate(newShape, currentTetromino.x, currentTetromino.y)) {
+                            memcpy(currentTetromino.shape, newShape, sizeof(newShape));
+                            }
+                            break;
+                         case ' ': // Drop Tetromino
+                            dropTetromino();
+                            clearFullLines(); // Check and clear any full lines
+                            createTetromino(getNextTetromino()); // Create a new Tetromino
+                            tetrominoCount++;
+                            break;
+                        // Add other controls as needed
+                    }
+                    }
+                    // Check for game over condition right after creating a new Tetromino
+                    if (!canMove(currentTetromino.x, currentTetromino.y)) {
+                        printf("Game Over\n");
+                        break;
+                    }
+                    // Automatically move the Tetromino down or fix it if it can't move down
+                    if (counter >= FALL_SPEED) {
+                        if (canMove(currentTetromino.x, currentTetromino.y + 1)) {
+                            moveTetromino(0, 1); // Move down
+                        }
+                        else {
+                            fixTetromino();
+                            clearFullLines();
+                            //createTetromino(rand() % NUM_TETROMINOS); // Create a new Tetromino
+                            createTetromino(getNextTetromino());
+                            tetrominoCount++;
+                        }
+                        counter = 0; // Reset the counter
+                    }
+                    else {
+                        counter++; // Increment the counter
+                    }
+
+                    printBoard(); // Print the updated board
+
+                    _sleep(100); // Sleep for a delay (adjust as needed)
+                }
+
+                // After game ends, wait for 5 seconds
+                _sleep(5000);  // Sleep for 5000 milliseconds (5 seconds)
                 break;
-            // Add other controls as needed
-        }
-        }
-        // Check for game over condition right after creating a new Tetromino
-        if (!canMove(currentTetromino.x, currentTetromino.y)) {
-            printf("Game Over\n");
-            break;
-        }
-        // Automatically move the Tetromino down or fix it if it can't move down
-        if (counter >= FALL_SPEED) {
-            if (canMove(currentTetromino.x, currentTetromino.y + 1)) {
-                moveTetromino(0, 1); // Move down
-            }
-            else {
-                fixTetromino();
-                clearFullLines();
-                //createTetromino(rand() % NUM_TETROMINOS); // Create a new Tetromino
-                createTetromino(getNextTetromino());
-                tetrominoCount++;
-            }
-            counter = 0; // Reset the counter
-        }
-        else {
-            counter++; // Increment the counter
-        }
+            case 2:
+                // Options functionality
+                break;
+            case 3:
+                // Leaderboard functionality
+                break;
+            case 4:
+                printf("Exiting...\n");
+                _sleep(2000);
 
-        printBoard(); // Print the updated board
-
-        _sleep(100); // Sleep for a delay (adjust as needed)
-
-        // Game over or max Tetromino count reached
-        //printf("Game Over\n");
+                return 0; // Exit the program
+            default:
+                printf("Invalid choice!\n");
+        }
     }
 
     return 0;
