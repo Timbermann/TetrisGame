@@ -169,7 +169,7 @@ void initBoard() {
 void printBoard() {
     system("cls"); // Clear the console
 
-    // Draw top border
+    // Top border (optional)
     for (int x = 0; x < BOARD_WIDTH + 2; x++) {
         printf("# ");
     }
@@ -178,7 +178,7 @@ void printBoard() {
     for (int y = 0; y < BOARD_HEIGHT; y++) {
         printf("# "); // Left border
         for (int x = 0; x < BOARD_WIDTH; x++) {
-            // Check if the current position is part of the Tetromino
+            // Check if the current cell is part of the active Tetromino
             bool isPartOfTetromino = false;
             for (int i = 0; i < TETROMINO_SIZE; i++) {
                 for (int j = 0; j < TETROMINO_SIZE; j++) {
@@ -200,14 +200,12 @@ void printBoard() {
         printf("#\n"); // Right border
     }
 
-    // Draw bottom border
+    // Bottom border
     for (int x = 0; x < BOARD_WIDTH + 2; x++) {
         printf("# ");
     }
     printf("\n");
 }
-
-
 
 int main() {
     initBoard();
