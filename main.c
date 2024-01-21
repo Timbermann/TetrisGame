@@ -199,6 +199,7 @@ void clearFullLines() {
     }
 }
 
+
 // Function to initialize the board
 void initBoard() {
     for (int y = 0; y < BOARD_HEIGHT; y++) {
