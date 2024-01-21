@@ -99,8 +99,27 @@ void createTetromino(TetrominoType type) {
 }
 
 bool canMove(int newX, int newY) {
-    // Collision detection logic here
-    // Return true if the Tetromino can move to the new position
+    bool canMove(int newX, int newY) {
+    for (int i = 0; i < TETROMINO_SIZE; i++) {
+        for (int j = 0; j < TETROMINO_SIZE; j++) {
+            if (currentTetromino.shape[i][j] == 1) {
+                int boardX = newX + j;
+                int boardY = newY + i;
+
+                // Check against the floor and walls
+                if (boardY >= BOARD_HEIGHT || boardX < 0 || boardX >= BOARD_WIDTH) {
+                    return false;
+                }
+
+                // Check against other fixed blocks
+                if (boardY >= 0 && board[boardY][boardX] == 1) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
 }
 
 void moveTetromino(int deltaX, int deltaY) {
@@ -222,22 +241,20 @@ int main() {
             }
         }
 
-        // Move the Tetromino down at regular intervals
+        // Automatically move the Tetromino down or fix it if it can't move down
         if (counter >= FALL_SPEED) {
-            if (canMove(currentTetromino.x, currentTetromino.y + 1)) {
-                moveTetromino(0, 1); // Move down
-            } else {
-                fixTetromino(); // Fix the Tetromino in place
-                if (tetrominoCount < MAX_TETROMINOES) {
-                    createTetromino(rand() % NUM_TETROMINOS); // Create a new Tetromino
-                    tetrominoCount++;
-                } else {
-                    break; // Max Tetromino count reached
-                }
-            }
-            counter = 0; // Reset the counter
-        } else {
-            counter++; // Increment the counter
+        if (canMove(currentTetromino.x, currentTetromino.y + 1)) {
+            moveTetromino(0, 1); // Move down
+        }
+        else {
+            fixTetromino(); // Fix the Tetromino in place
+            createTetromino(rand() % NUM_TETROMINOS); // Create a new Tetromino
+            tetrominoCount++;
+        }
+        counter = 0; // Reset the counter
+        }
+        else {
+        counter++; // Increment the counter
         }
 
         printBoard(); // Print the updated board
