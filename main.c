@@ -150,6 +150,13 @@ bool canMove(int newX, int newY) {
     return true;
 }
 
+void dropTetromino() {
+    while (canMove(currentTetromino.x, currentTetromino.y + 1)) {
+        currentTetromino.y++;
+    }
+    fixTetromino(); // Fix the Tetromino in place after dropping
+}
+
 void moveTetromino(int deltaX, int deltaY) {
     int newX = currentTetromino.x + deltaX;
     int newY = currentTetromino.y + deltaY;
@@ -319,6 +326,12 @@ int main() {
                 if (canRotate(newShape, currentTetromino.x, currentTetromino.y)) {
                 memcpy(currentTetromino.shape, newShape, sizeof(newShape));
                 }
+                break;
+             case ' ': // Drop Tetromino
+                dropTetromino();
+                clearFullLines(); // Check and clear any full lines
+                createTetromino(getNextTetromino()); // Create a new Tetromino
+                tetrominoCount++;
                 break;
             // Add other controls as needed
         }
