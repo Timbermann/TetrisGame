@@ -8,7 +8,6 @@
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
 #define TETROMINO_SIZE 4
-#define FALL_SPEED 4
 #define MAX_TETROMINOES 60
 #define MAX_SCORES 10
 #define MAX_TOTAL_SCORES 1000
@@ -39,6 +38,7 @@ typedef enum {
 TetrominoType bag[NUM_TETROMINOS];
 int nextIndex = 0;
 int score = 0;
+int fallSpeed = 5;
 
 int tetrominos[NUM_TETROMINOS][TETROMINO_SIZE][TETROMINO_SIZE] = {
     // I
@@ -324,6 +324,21 @@ void displayLeaderboard() {
     printf("\nPress 'X' to get back to menu.\n");
 }
 
+void displayOptionsMenu() {
+    int newSpeed;
+    printf("Current Fall Speed: %d\n", fallSpeed);
+    printf("Enter new fall speed (1-10, where 1 is the fastest and 10 is the slowest): ");
+    scanf("%d", &newSpeed);
+
+    if (newSpeed >= 1 && newSpeed <= 10) {
+        fallSpeed = newSpeed;
+    } else {
+        printf("Invalid speed. Keeping current speed.\n");
+    }
+
+    _sleep(2000); // Wait for 2 seconds before returning to the menu
+}
+
 // Function to print the board
 void printBoard() {
     system("cls"); // Clear the console
@@ -439,7 +454,7 @@ int main() {
                         break;
                     }
                     // Automatically move the Tetromino down or fix it if it can't move down
-                    if (counter >= FALL_SPEED) {
+                    if (counter >= fallSpeed) {
                         if (canMove(currentTetromino.x, currentTetromino.y + 1)) {
                             moveTetromino(0, 1); // Move down
                         }
@@ -466,7 +481,7 @@ int main() {
                 break;
             case 2:
 
-                // Options functionality
+                displayOptionsMenu();
                 break;
             case 3:
 
