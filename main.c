@@ -10,7 +10,8 @@
 #define TETROMINO_SIZE 4
 #define FALL_SPEED 4
 #define MAX_TETROMINOES 60
-//#define TETRIS_NUM_TETROMINOS 7
+#define MAX_SCORES 10
+#define MAX_TOTAL_SCORES 1000
 
 int displayMenu() {
     int choice;
@@ -37,6 +38,7 @@ typedef enum {
 
 TetrominoType bag[NUM_TETROMINOS];
 int nextIndex = 0;
+int score = 0;
 
 int tetrominos[NUM_TETROMINOS][TETROMINO_SIZE][TETROMINO_SIZE] = {
     // I
@@ -247,6 +249,7 @@ void clearFullLines() {
 
             // Since we just shifted a line down, we need to check this line again
             y--;
+            score++;
         }
     }
 }
@@ -259,6 +262,66 @@ void initBoard() {
             board[y][x] = 0;
         }
     }
+}
+
+void writeScoreToFile(int finalScore) {
+    FILE *file = fopen("scores.txt", "a"); // Open the file in append mode
+    if (file != NULL) {
+        fprintf(file, "Score: %d\n", finalScore); // Write the score on a new line
+        fclose(file); // Close the file
+    } else {
+        printf("Unable to save the score.\n");
+    }
+}
+
+void readAndSortScores(int bestScores[], int *numScores) {
+    FILE *file = fopen("scores.txt", "r");
+    if (file == NULL) {
+        printf("No scores available.\n");
+        *numScores = 0;
+        return;
+    }
+
+    // Read all scores into an array
+    int allScores[MAX_TOTAL_SCORES];
+    int score, totalScores = 0;
+    while (fscanf(file, "Score: %d\n", &score) == 1 && totalScores < MAX_TOTAL_SCORES) {
+        allScores[totalScores++] = score;
+    }
+    fclose(file);
+
+    // Sort all scores in descending order
+    for (int i = 0; i < totalScores - 1; i++) {
+        for (int j = i + 1; j < totalScores; j++) {
+            if (allScores[i] < allScores[j]) {
+                int temp = allScores[i];
+                allScores[i] = allScores[j];
+                allScores[j] = temp;
+            }
+        }
+    }
+
+    // Select the top 10 scores (or fewer if there aren't enough)
+    *numScores = totalScores < MAX_SCORES ? totalScores : MAX_SCORES;
+    for (int i = 0; i < *numScores; i++) {
+        bestScores[i] = allScores[i];
+    }
+}
+
+void displayLeaderboard() {
+    int scores[MAX_SCORES], numScores;
+    readAndSortScores(scores, &numScores);
+
+    printf("Leaderboard:\n");
+    for (int i = 0; i < numScores; i++) {
+        printf("%d. %d\n", i + 1, scores[i]);
+    }
+
+    if (numScores == 0) {
+        printf("No scores available.\n");
+    }
+
+    printf("\nPress 'X' to get back to menu.\n");
 }
 
 // Function to print the board
@@ -301,30 +364,26 @@ void printBoard() {
         printf("# ");
     }
     printf("\n");
+    printf("\n");
+    printf("Score: %d\n", score);
 }
 
 int main() {
     srand(time(NULL)); // Seed the random number generator
-   /*
-    fillAndShuffleBag(); // Initially fill and shuffle the bag
-    initBoard();
     int tetrominoCount = 0;
-    //createTetromino(T); // Create an initial Tetromino, e.g., T-shaped
-    createTetromino(rand() % NUM_TETROMINOS); // Create a random Tetromino
-    tetrominoCount++;
     int counter = 0;
-    */
+    score = 0;
+    char key;
+    int menuChoice;
 
     while (true) {  // Main loop
-        int menuChoice = displayMenu();
-        int tetrominoCount = 0;
-        int counter = 0;
-        char key;
+        menuChoice = displayMenu();
 
         switch (menuChoice) {
             case 1:
+
                 printf("Starting New Game...\n");
-                _sleep(2000);
+                _sleep(1000);
                 fillAndShuffleBag(); // Initially fill and shuffle the bag
                 initBoard();
                 tetrominoCount = 0;
@@ -332,6 +391,7 @@ int main() {
                 createTetromino(rand() % NUM_TETROMINOS); // Create a random Tetromino
                 tetrominoCount++;
                 counter = 0;
+                score = 0;
 
                 while (tetrominoCount <= MAX_TETROMINOES) {
                     if (_kbhit()) {
@@ -375,6 +435,7 @@ int main() {
                     // Check for game over condition right after creating a new Tetromino
                     if (!canMove(currentTetromino.x, currentTetromino.y)) {
                         printf("Game Over\n");
+                        writeScoreToFile(score);
                         break;
                     }
                     // Automatically move the Tetromino down or fix it if it can't move down
@@ -401,20 +462,28 @@ int main() {
                 }
 
                 // After game ends, wait for 5 seconds
-                _sleep(5000);  // Sleep for 5000 milliseconds (5 seconds)
+                _sleep(2000);  // Sleep for 5000 milliseconds (5 seconds)
                 break;
             case 2:
+
                 // Options functionality
                 break;
             case 3:
-                // Leaderboard functionality
+
+                displayLeaderboard();
+                char ch;
+                do {
+                    ch = getchar();  // Wait for user to press 'X'
+                } while (toupper(ch) != 'X');
                 break;
             case 4:
+
                 printf("Exiting...\n");
-                _sleep(2000);
+                _sleep(1000);
 
                 return 0; // Exit the program
             default:
+
                 printf("Invalid choice!\n");
         }
     }
